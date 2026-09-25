@@ -1,0 +1,30 @@
+#!/bin/sh
+# Opt-in PATH wrapper: routes `terminal-browser open` inside herdr through the relay, runs the real binary otherwise.
+here=$(cd "$(dirname "$0")" && pwd)
+relay_bin=$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")" && pwd)
+
+real=""
+old_ifs=$IFS
+IFS=:
+for dir in $PATH; do
+  [ -n "$dir" ] || continue
+  dir=$(cd "$dir" 2>/dev/null && pwd) || continue
+  [ "$dir" = "$here" ] && continue
+  [ "$dir" = "$relay_bin" ] && continue
+  if [ -x "$dir/terminal-browser" ] && [ ! -d "$dir/terminal-browser" ]; then
+    real="$dir/terminal-browser"
+    break
+  fi
+done
+IFS=$old_ifs
+
+if [ -z "$real" ]; then
+  echo "terminal-browser-relay wrapper: the real terminal-browser is not on PATH" >&2
+  exit 127
+fi
+
+if [ "$1" = "open" ] && [ "${HERDR_ENV:-}" = "1" ] && [ -z "${PIXEL_TTY:-}" ] && [ -z "${TBR_PASSTHROUGH:-}" ]; then
+  shift
+  TBR_REAL_TERMINAL_BROWSER="$real" exec sh "$relay_bin/tb-relay.sh" route-open "$@"
+fi
+exec "$real" "$@"

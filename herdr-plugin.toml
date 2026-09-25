@@ -1,0 +1,25 @@
+id = "tb-relay.terminal-browser-relay"
+name = "Terminal Browser Relay"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Run terminal-browser behind a relay that sends throttled, downscaled frames, so it stays usable over SSH"
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "open-split"
+title = "Open terminal-browser relay (right split)"
+description = "Split the focused pane and open terminal-browser through the relay in a 35% pane"
+contexts = ["global"]
+command = ["sh", "bin/tb-relay.sh", "split"]
+
+[[link_handlers]]
+id = "web-link"
+title = "Open link in terminal-browser relay"
+pattern = "^https?://"
+action = "open-split"
+
+[[panes]]
+id = "relay"
+title = "Terminal Browser Relay"
+placement = "split"
+command = ["sh", "bin/tb-relay.sh", "open"]

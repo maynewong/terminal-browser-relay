@@ -1,0 +1,17 @@
+{
+  "name": "terminal-browser-relay",
+  "version": "0.1.0",
+  "description": "herdr plugin that relays terminal-browser frames at a throttled, downscaled rate so it stays usable over SSH",
+  "license": "MIT",
+  "type": "commonjs",
+  "private": true,
+  "bin": {
+    "tb-relay": "bin/tb-relay.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
